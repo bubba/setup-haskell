@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import {findHaskellGHCVersion, findHaskellCabalVersion} from './installer';
+import {findHaskellGHCVersion, findHaskellCabalVersion, acquireGhcup} from './installer';
 
 // ghc and cabal are installed directly to /opt so use that directlly instead of
 // copying over to the toolcache dir.
@@ -8,6 +8,9 @@ const defaultGHCVersion = '8.6.5';
 const defaultCabalVersion = '3.0';
 
 async function run() {
+
+  await acquireGhcup();
+
   try {
     let ghcVersion = core.getInput('ghc-version');
     if (!ghcVersion) {
