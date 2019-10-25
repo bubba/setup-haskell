@@ -19,7 +19,8 @@ async function run() {
 
   try {
     findHaskellGHCVersion(baseInstallDir, ghcVersion);
-    findHaskellCabalVersion(baseInstallDir, cabalVersion);
+    // fallback to a two-digits cabal version because that is what could be pre-installed.
+    findHaskellCabalVersion(baseInstallDir, getMajorVersion(cabalVersion));
   } catch (error) {
     core.info('Haskell toolchain is not pre-installed, will install it now');
 
@@ -34,6 +35,15 @@ async function run() {
     } catch (error) {
       core.setFailed(error.message);
     }
+  }
+}
+
+function getMajorVersion(version: string): string {
+  const vparts = version.split('.');
+  switch (vparts.length) {
+    case 0: return version;
+    case 1: return vparts[0].concat('.0')
+    default: return `${vparts[0]}.${vparts[1]}`;
   }
 }
 
