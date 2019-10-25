@@ -39,7 +39,7 @@ export async function acquireGhcup() {
     throw `Unable to install 'ghcup'. Result code is ${resultCode}. Output: ${output}`;
   }
 
-  core.addPath(path.join(os.homedir(), ".ghcup", "bin"));
+  core.addPath(path.join(os.homedir(), '.ghcup', 'bin'));
 
   let toolPath = await io.which('ghcup', true);
 
