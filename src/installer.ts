@@ -52,8 +52,6 @@ export async function installGhcup() {
   if (resultCode != 0) {
     throw `Unable to determine if 'ghcup' was installed. The path is ${toolPath}. Result code is ${resultCode}. Output: ${output}`;
   }
-
-  return tc.cacheFile(toolPath, toolPath, 'ghcup', '0', os.arch());
 }
 
 export async function installGhc(ghcVersion: string, cabalVersion: string) {
