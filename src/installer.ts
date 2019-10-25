@@ -36,7 +36,7 @@ export async function acquireGhcup() {
     throw `Unable to install 'ghcup'. Result code is ${resultCode}. Output: ${output}`;
   }
 
-  let toolPath = io.which('ghcup', true);
+  let toolPath = await io.which('ghcup', true);
   output = '';
   resultCode = await exec.exec(`"${toolPath}`, ['--version'], {
     listeners: {
