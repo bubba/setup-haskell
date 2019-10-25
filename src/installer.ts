@@ -20,19 +20,31 @@ export function findHaskellCabalVersion(
 
 export async function acquireGhcup() {
   core.exportVariable('BOOTSTRAP_HASKELL_NONINTERACTIVE', 'true');
-  let downloadPath = await tc.downloadTool("https://get-ghcup.haskell.org");
-  fs.chmodSync(downloadPath, "+x");
+  let downloadPath = await tc.downloadTool('https://get-ghcup.haskell.org');
+  fs.chmodSync(downloadPath, '777');
 
   let output = '';
-  let resultCode = await exec.exec("sh", [downloadPath], {listeners: { stdout: (data: Buffer) => { output += data.toString(); }}});
+  let resultCode = await exec.exec('sh', [downloadPath], {
+    listeners: {
+      stdout: (data: Buffer) => {
+        output += data.toString();
+      }
+    }
+  });
 
   if (resultCode != 0) {
     throw `Unable to install 'ghcup'. Result code is ${resultCode}. Output: ${output}`;
   }
 
-  let toolPath = io.which("ghcup", true);
+  let toolPath = io.which('ghcup', true);
   output = '';
-  resultCode = await exec.exec(`"${toolPath}`, ["--version"], {listeners: { stdout: (data: Buffer) => { output += data.toString(); }}});
+  resultCode = await exec.exec(`"${toolPath}`, ['--version'], {
+    listeners: {
+      stdout: (data: Buffer) => {
+        output += data.toString();
+      }
+    }
+  });
 
   if (resultCode != 0) {
     throw `Unable to determine if 'ghcup' was installed. The path is ${toolPath}. Result code is ${resultCode}. Output: ${output}`;
@@ -42,13 +54,10 @@ export async function acquireGhcup() {
 }
 
 function installGhcup() {
-  let toolPath = tc.find("ghcup", "0.0.0");
-
+  let toolPath = tc.find('ghcup', '0.0.0');
 }
 
-function installViaGhcup(ghcVer: string, cabalVer: string) {
-
-}
+function installViaGhcup(ghcVer: string, cabalVer: string) {}
 
 export function _findHaskellToolVersion(
   baseInstallDir: string,
