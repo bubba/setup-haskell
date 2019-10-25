@@ -18,13 +18,10 @@ export function findHaskellCabalVersion(
   return _findHaskellToolVersion(baseInstallDir, 'cabal', version);
 }
 
-export async function acquireGhcup() {
+export async function installGhcup() {
   core.exportVariable('BOOTSTRAP_HASKELL_NONINTERACTIVE', 'true');
   let downloadPath = await tc.downloadTool('https://get-ghcup.haskell.org');
   fs.chmodSync(downloadPath, '777');
-
-  // let ghcupPath = path.join(os.)
-  // core.addPath()
 
   let output = '';
   let resultCode = await exec.exec('sh', [downloadPath], {
@@ -55,13 +52,29 @@ export async function acquireGhcup() {
   if (resultCode != 0) {
     throw `Unable to determine if 'ghcup' was installed. The path is ${toolPath}. Result code is ${resultCode}. Output: ${output}`;
   }
+
+  return tc.cacheFile(toolPath, toolPath, 'ghcup', '0', os.arch());
 }
 
-function installGhcup() {
-  let toolPath = tc.find('ghcup', '0.0.0');
-}
+export async function installGhc(ghcVersion: string, cabalVersion: string) {
+  try {
+    await exec.exec('ghcup', ['install', ghcVersion]);
+  } catch (err) {
+    throw err;
+  }
 
-function installViaGhcup(ghcVer: string, cabalVer: string) {}
+  try {
+    await exec.exec('ghcup', ['set', ghcVersion]);
+  } catch (err) {
+    throw err;
+  }
+
+  try {
+    await exec.exec('ghcup', ['install-cabal', cabalVersion]);
+  } catch (err) {
+    throw err
+  }
+}
 
 export function _findHaskellToolVersion(
   baseInstallDir: string,
@@ -75,7 +88,7 @@ export function _findHaskellToolVersion(
     throw new Error('toolName parameter is required');
   }
   if (!version) {
-    throw new Error('versionSpec parameter is required');
+    throw new Error('version parameter is required');
   }
 
   const toolPath: string = path.join(baseInstallDir, tool, version, 'bin');

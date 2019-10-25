@@ -2,7 +2,9 @@ import * as core from '@actions/core';
 import {
   findHaskellGHCVersion,
   findHaskellCabalVersion,
-  acquireGhcup
+  installGhcup,
+  installGhc
+
 } from './installer';
 
 // ghc and cabal are installed directly to /opt so use that directlly instead of
@@ -12,23 +14,37 @@ const defaultGHCVersion = '8.6.5';
 const defaultCabalVersion = '3.0';
 
 async function run() {
-  await acquireGhcup();
+  let baseDir = getInputOrDefault('base-install-dir', baseInstallDir);
+  let ghcVersion = getInputOrDefault('ghc-version', defaultGHCVersion);
+  let cabalVersion = getInputOrDefault('cabal-version', defaultCabalVersion);
 
   try {
-    let ghcVersion = core.getInput('ghc-version');
-    if (!ghcVersion) {
-      ghcVersion = defaultGHCVersion;
-    }
     findHaskellGHCVersion(baseInstallDir, ghcVersion);
-
-    let cabalVersion = core.getInput('cabal-version');
-    if (!cabalVersion) {
-      cabalVersion = defaultCabalVersion;
-    }
     findHaskellCabalVersion(baseInstallDir, cabalVersion);
   } catch (error) {
-    core.setFailed(error.message);
+    core.info("Haskell toolchain is not pre-installed, will install it now");
+
+    try {
+      core.startGroup("Installing ghcup");
+      await installGhcup();
+      core.endGroup();
+
+      core.startGroup("Installing GHC");
+      await installGhc(ghcVersion, cabalVersion);
+      core.endGroup();
+    } catch (error) {
+      core.setFailed(error.message);
+    }
   }
 }
+
+function getInputOrDefault(name: string, z: string): string {
+  let value = core.getInput(name);
+  if (!value) {
+    return z;
+  } else {
+    return value;
+  }
+};
 
 run();
