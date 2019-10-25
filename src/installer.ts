@@ -23,6 +23,9 @@ export async function acquireGhcup() {
   let downloadPath = await tc.downloadTool('https://get-ghcup.haskell.org');
   fs.chmodSync(downloadPath, '777');
 
+  // let ghcupPath = path.join(os.)
+  // core.addPath()
+
   let output = '';
   let resultCode = await exec.exec('sh', [downloadPath], {
     listeners: {
@@ -36,7 +39,10 @@ export async function acquireGhcup() {
     throw `Unable to install 'ghcup'. Result code is ${resultCode}. Output: ${output}`;
   }
 
+  core.addPath(path.join(os.homedir(), ".ghcup", "bin"));
+
   let toolPath = await io.which('ghcup', true);
+
   output = '';
   resultCode = await exec.exec(`"${toolPath}`, ['--version'], {
     listeners: {
@@ -48,8 +54,6 @@ export async function acquireGhcup() {
 
   if (resultCode != 0) {
     throw `Unable to determine if 'ghcup' was installed. The path is ${toolPath}. Result code is ${resultCode}. Output: ${output}`;
-  } else {
-    throw `Successfully installed 'ghcup'. The path is ${toolPath}. Result code is ${resultCode}. Output: ${output}`;
   }
 }
 
