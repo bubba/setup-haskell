@@ -4,7 +4,6 @@ import {
   findHaskellCabalVersion,
   installGhcup,
   installGhc
-
 } from './installer';
 
 // ghc and cabal are installed directly to /opt so use that directlly instead of
@@ -22,14 +21,14 @@ async function run() {
     findHaskellGHCVersion(baseInstallDir, ghcVersion);
     findHaskellCabalVersion(baseInstallDir, cabalVersion);
   } catch (error) {
-    core.info("Haskell toolchain is not pre-installed, will install it now");
+    core.info('Haskell toolchain is not pre-installed, will install it now');
 
     try {
-      core.startGroup("Installing ghcup");
+      core.startGroup('Installing ghcup');
       await installGhcup();
       core.endGroup();
 
-      core.startGroup("Installing GHC");
+      core.startGroup('Installing GHC');
       await installGhc(ghcVersion, cabalVersion);
       core.endGroup();
     } catch (error) {
@@ -45,6 +44,6 @@ function getInputOrDefault(name: string, z: string): string {
   } else {
     return value;
   }
-};
+}
 
 run();

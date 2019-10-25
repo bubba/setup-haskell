@@ -72,7 +72,7 @@ export async function installGhc(ghcVersion: string, cabalVersion: string) {
   try {
     await exec.exec('ghcup', ['install-cabal', cabalVersion]);
   } catch (err) {
-    throw err
+    throw err;
   }
 }
 
