@@ -69,6 +69,7 @@ export async function installGhc(ghcVersion: string, cabalVersion: string) {
 
   try {
     await exec.exec('ghcup', ['install-cabal', getPVPVersion(cabalVersion)]);
+    core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
   } catch (err) {
     throw err;
   }
