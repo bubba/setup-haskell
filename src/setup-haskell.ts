@@ -22,6 +22,8 @@ async function run() {
     findHaskellGHCVersion(baseInstallDir, ghcVersion);
     // fallback to a two-digits cabal version because that is what could be pre-installed.
     findHaskellCabalVersion(baseInstallDir, getMajorVersion(cabalVersion));
+
+	core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
   } catch (error) {
     core.info('Haskell toolchain is not pre-installed, will install it now');
 
@@ -33,8 +35,6 @@ async function run() {
       core.startGroup('Installing GHC');
       await installGhc(ghcVersion, cabalVersion);
       core.endGroup();
-
-      core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
     } catch (error) {
       core.setFailed(error.message);
     }
