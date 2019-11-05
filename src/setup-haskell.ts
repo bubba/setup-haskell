@@ -33,6 +33,8 @@ async function run() {
       core.startGroup('Installing GHC');
       await installGhc(ghcVersion, cabalVersion);
       core.endGroup();
+
+      core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
     } catch (error) {
       core.setFailed(error.message);
     }
