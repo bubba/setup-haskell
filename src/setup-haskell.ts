@@ -1,4 +1,6 @@
 import * as core from '@actions/core';
+import * as os from 'os';
+import * as path from 'path';
 import {
   findHaskellGHCVersion,
   findHaskellCabalVersion,
@@ -23,7 +25,6 @@ async function run() {
     // fallback to a two-digits cabal version because that is what could be pre-installed.
     findHaskellCabalVersion(baseInstallDir, getMajorVersion(cabalVersion));
 
-	core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
   } catch (error) {
     core.info('Haskell toolchain is not pre-installed, will install it now');
 
@@ -39,6 +40,7 @@ async function run() {
       core.setFailed(error.message);
     }
   }
+  core.addPath(path.join(os.homedir(), '.cabal', 'bin'));
 }
 
 function getInputOrDefault(name: string, z: string): string {
