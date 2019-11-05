@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import {
   findHaskellGHCVersion,
   findHaskellCabalVersion,
+  getMajorVersion,
   installGhcup,
   installGhc
 } from './installer';
@@ -35,15 +36,6 @@ async function run() {
     } catch (error) {
       core.setFailed(error.message);
     }
-  }
-}
-
-function getMajorVersion(version: string): string {
-  const vparts = version.split('.');
-  switch (vparts.length) {
-    case 0: return version;
-    case 1: return vparts[0].concat('.0')
-    default: return `${vparts[0]}.${vparts[1]}`;
   }
 }
 

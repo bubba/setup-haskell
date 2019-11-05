@@ -68,7 +68,7 @@ export async function installGhc(ghcVersion: string, cabalVersion: string) {
   }
 
   try {
-    await exec.exec('ghcup', ['install-cabal', cabalVersion]);
+    await exec.exec('ghcup', ['install-cabal', getMajorVersion(cabalVersion)]);
   } catch (err) {
     throw err;
   }
@@ -95,5 +95,14 @@ export function _findHaskellToolVersion(
     core.addPath(toolPath);
   } else {
     throw new Error(`Version ${version} of ${tool} not found`);
+  }
+}
+
+export function getMajorVersion(version: string): string {
+  const vparts = version.split('.');
+  switch (vparts.length) {
+    case 0: return version;
+    case 1: return vparts[0].concat('.0')
+    default: return `${vparts[0]}.${vparts[1]}`;
   }
 }
